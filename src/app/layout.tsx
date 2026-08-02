@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Club Downtown VIP",
+  title: "Downtown VIP",
   description: "Ditt digitale VIP-pass til Club Downtown.",
   applicationName: "Downtown VIP",
   appleWebApp: {

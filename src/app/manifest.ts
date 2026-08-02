@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "Club Downtown VIP",
+    name: "Downtown VIP",
     short_name: "Downtown VIP",
     description: "Ditt digitale VIP-pass til Club Downtown.",
     start_url: "/",
