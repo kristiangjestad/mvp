@@ -1,0 +1,288 @@
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --soft-white: #f2f2f2;
+  --burgundy: #2a1418;
+  --date-pink: #ef9fa8;
+  --gold-dark: #9d6500;
+  --gold: #f3c22c;
+  --gold-light: #ffe57a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--black);
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--black);
+  color: var(--white);
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+.app-shell {
+  width: 100%;
+  min-height: 100svh;
+  min-height: 100dvh;
+  background: var(--black);
+}
+
+.vip-screen {
+  padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+.vip-pass {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.club-logo {
+  display: block;
+  width: min(64vw, 248px);
+  height: auto;
+  margin: 0 auto 4px;
+}
+
+.vip-artwork {
+  position: relative;
+  width: min(100%, 370px);
+  height: 202px;
+  margin: -5px auto 0;
+}
+
+.dancers {
+  position: absolute;
+  right: 50%;
+  bottom: 0;
+  width: min(94vw, 358px);
+  height: auto;
+  transform: translateX(50%);
+}
+
+.vip-badge {
+  position: absolute;
+  top: 29px;
+  left: 50%;
+  width: 162px;
+  height: auto;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 0 9px rgb(243 194 44 / 35%));
+}
+
+.nameplate {
+  position: relative;
+  width: min(82vw, 310px);
+  aspect-ratio: 1149 / 249;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+}
+
+.nameplate img {
+  object-fit: contain;
+}
+
+.nameplate strong {
+  position: relative;
+  z-index: 1;
+  max-width: 78%;
+  overflow: hidden;
+  color: #090909;
+  font-size: clamp(17px, 5vw, 20px);
+  font-weight: 700;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guest-access {
+  margin: 8px 0 0;
+  color: var(--soft-white);
+  font-size: clamp(16px, 4.5vw, 18px);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.guest-access span {
+  display: inline-block;
+  margin: 0 3px;
+  font-size: 27px;
+  line-height: 1;
+  vertical-align: -2px;
+}
+
+.check-in-slot {
+  min-height: 56px;
+  margin-top: 30px;
+  display: grid;
+  place-items: center;
+}
+
+.check-in-button {
+  width: 148px;
+  min-height: 50px;
+  border: 1px solid #c8c8c8;
+  border-radius: 28px;
+  background: linear-gradient(to bottom, #ffffff 0%, #fafafa 45%, #e6e6e6 100%);
+  box-shadow: inset 0 2px 3px rgb(255 255 255 / 90%), inset 0 -2px 3px rgb(0 0 0 / 8%);
+  color: #111111;
+  cursor: pointer;
+  font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  font-size: 22px;
+  font-style: italic;
+  line-height: 1;
+}
+
+.check-in-button:active {
+  transform: translateY(1px);
+  filter: brightness(0.94);
+}
+
+.check-in-button:focus-visible,
+.access-button:focus-visible,
+.access-form input:focus-visible {
+  outline: 3px solid var(--gold-light);
+  outline-offset: 3px;
+}
+
+.check-in-time {
+  margin: 0;
+  color: var(--date-pink);
+  font-size: clamp(16px, 4.4vw, 18px);
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.instructions {
+  margin: 56px 0 0;
+  color: var(--soft-white);
+  font-size: clamp(15px, 4.2vw, 17px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.22;
+}
+
+.access-screen {
+  min-height: 100dvh;
+  padding: max(28px, env(safe-area-inset-top)) 24px max(32px, env(safe-area-inset-bottom));
+  display: grid;
+  place-items: center;
+}
+
+.access-card {
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+}
+
+.access-logo {
+  display: block;
+  width: min(74vw, 270px);
+  height: auto;
+  margin: 0 auto 18px;
+}
+
+.access-card h1 {
+  margin: 0;
+  color: var(--gold-light);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.access-intro {
+  margin: 10px auto 28px;
+  color: #d8d8d8;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.access-form {
+  display: grid;
+  gap: 9px;
+  text-align: left;
+}
+
+.access-form label {
+  margin-top: 8px;
+  color: var(--soft-white);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.access-form input {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid #5d4b27;
+  border-radius: 10px;
+  background: #111111;
+  color: var(--white);
+  padding: 0 14px;
+  font-size: 17px;
+}
+
+.form-error {
+  margin: 5px 0 0;
+  color: var(--date-pink);
+  font-size: 14px;
+}
+
+.access-button {
+  min-height: 52px;
+  margin-top: 18px;
+  border: 1px solid var(--gold-dark);
+  border-radius: 10px;
+  background: linear-gradient(105deg, #b47800, #ffd83d 24%, #fff2a1 46%, #d99500 75%, #f8ce31);
+  color: #090909;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+@media (max-width: 360px) {
+  .vip-screen {
+    padding-inline: 10px;
+  }
+
+  .vip-artwork {
+    height: 190px;
+  }
+
+  .vip-badge {
+    width: 151px;
+  }
+
+  .instructions {
+    margin-top: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
