@@ -17,6 +17,7 @@
 html {
   min-height: 100%;
   background: var(--black);
+  overscroll-behavior: none;
 }
 
 body {
@@ -27,6 +28,16 @@ body {
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
 }
 
 button,
@@ -151,10 +162,27 @@ button {
   box-shadow: inset 0 2px 3px rgb(255 255 255 / 90%), inset 0 -2px 3px rgb(0 0 0 / 8%);
   color: #111111;
   cursor: pointer;
-  font-family: "MV Boli", "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
-  font-size: 22px;
-  font-style: normal;
-  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+.check-in-label-graphic {
+  display: block;
+  width: 118px;
+  height: 30px;
+  background: url("/assets/check-in-label.png") 0 0 / 584px 214.4px no-repeat;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .check-in-button:active {
@@ -245,6 +273,8 @@ button {
   color: var(--white);
   padding: 0 14px;
   font-size: 17px;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .form-error {

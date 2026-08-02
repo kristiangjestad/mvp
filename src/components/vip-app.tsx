@@ -261,7 +261,10 @@ function VipPass({ session, onCheckIn }: { session: PublicAccessSession; onCheck
           {session.checkInUntil ? (
             <p className="check-in-time">Kan sjekke inn: {formatCheckInTime(session.checkInUntil)}</p>
           ) : (
-            <button className="check-in-button" type="button" onClick={onCheckIn}>Sjekk inn</button>
+            <button className="check-in-button" type="button" onClick={onCheckIn}>
+              <span className="check-in-label-graphic" aria-hidden="true" />
+              <span className="sr-only">Sjekk inn</span>
+            </button>
           )}
         </div>
 
