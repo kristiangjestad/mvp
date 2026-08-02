@@ -2,22 +2,24 @@
 
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
-import {
-  CHECK_IN_DURATION_MS,
-  createVipSession,
-  formatCheckInTime,
-  readVipSession,
-  VipSession,
-  writeVipSession,
-} from "@/lib/vip-session";
-
-const ACCESS_CODE = process.env.NEXT_PUBLIC_VIP_PASSWORD ?? "vip2026";
+import { formatCheckInTime } from "@/lib/vip-session";
+import type { PublicAccessSession } from "@/lib/vip-access";
 
 export function VipApp() {
-  const [session, setSession] = useState<VipSession | null | undefined>(undefined);
+  const [session, setSession] = useState<PublicAccessSession | null | undefined>(undefined);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
-    setSession(readVipSession());
+    fetch("/api/access/session", { cache: "no-store" })
+      .then(async (response) => {
+        const data = (await response.json()) as { session?: PublicAccessSession | null; error?: string };
+        if (!response.ok) throw new Error(data.error ?? "Kunne ikke åpne VIP-passet.");
+        setSession(data.session ?? null);
+      })
+      .catch((error: unknown) => {
+        setLoadError(error instanceof Error ? error.message : "Kunne ikke åpne VIP-passet.");
+        setSession(null);
+      });
   }, []);
 
   if (session === undefined) {
@@ -25,39 +27,59 @@ export function VipApp() {
   }
 
   if (!session) {
-    return <AccessGate onAuthorized={setSession} />;
+    return <AccessGate onAuthorized={setSession} initialError={loadError} />;
   }
 
-  function checkIn() {
-    if (!session) return;
-    const updated = { ...session, checkInUntil: Date.now() + CHECK_IN_DURATION_MS };
-    writeVipSession(updated);
-    setSession(updated);
+  async function checkIn() {
+    const response = await fetch("/api/access/check-in", { method: "POST" });
+    const data = (await response.json()) as { checkInUntil?: number; error?: string };
+    if (!response.ok || !data.checkInUntil) throw new Error(data.error ?? "Kunne ikke sjekke inn.");
+    setSession((current) => current ? { ...current, checkInUntil: data.checkInUntil } : current);
   }
 
   return <VipPass session={session} onCheckIn={checkIn} />;
 }
 
-function AccessGate({ onAuthorized }: { onAuthorized: (session: VipSession) => void }) {
+function AccessGate({
+  onAuthorized,
+  initialError,
+}: {
+  onAuthorized: (session: PublicAccessSession) => void;
+  initialError?: string;
+}) {
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState(initialError ?? "");
+  const [submitting, setSubmitting] = useState(false);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmedName = name.trim();
     if (!trimmedName) {
       setError("Skriv inn navnet ditt.");
       return;
     }
-    if (password !== ACCESS_CODE) {
-      setError("Passordet er ikke riktig.");
+    if (!code.trim()) {
+      setError("Skriv inn tilgangskoden.");
       return;
     }
 
-    const nextSession = createVipSession(trimmedName);
-    writeVipSession(nextSession);
-    onAuthorized(nextSession);
+    setSubmitting(true);
+    setError("");
+    try {
+      const response = await fetch("/api/access/redeem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmedName, code }),
+      });
+      const data = (await response.json()) as { session?: PublicAccessSession; error?: string };
+      if (!response.ok || !data.session) throw new Error(data.error ?? "Koden kunne ikke aktiveres.");
+      onAuthorized(data.session);
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Koden kunne ikke aktiveres.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -72,7 +94,7 @@ function AccessGate({ onAuthorized }: { onAuthorized: (session: VipSession) => v
           priority
         />
         <h1 id="access-title">VIP-pass</h1>
-        <p className="access-intro">Skriv inn navn og passord for å åpne passet.</p>
+        <p className="access-intro">Skriv inn navn og engangskoden du har fått.</p>
 
         <form onSubmit={submit} className="access-form">
           <label htmlFor="name">Navn</label>
@@ -84,25 +106,40 @@ function AccessGate({ onAuthorized }: { onAuthorized: (session: VipSession) => v
             onChange={(event) => setName(event.target.value)}
           />
 
-          <label htmlFor="password">Passord</label>
+          <label htmlFor="code">Engangskode</label>
           <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            id="code"
+            name="code"
+            autoCapitalize="characters"
+            autoCorrect="off"
+            autoComplete="one-time-code"
+            spellCheck={false}
+            value={code}
+            onChange={(event) => setCode(event.target.value.toUpperCase())}
           />
 
           {error ? <p className="form-error" role="alert">{error}</p> : null}
-          <button type="submit" className="access-button">Åpne VIP-pass</button>
+          <button type="submit" className="access-button" disabled={submitting}>
+            {submitting ? "Aktiverer…" : "Åpne VIP-pass"}
+          </button>
         </form>
       </section>
     </main>
   );
 }
 
-function VipPass({ session, onCheckIn }: { session: VipSession; onCheckIn: () => void }) {
+function VipPass({ session, onCheckIn }: { session: PublicAccessSession; onCheckIn: () => Promise<void> }) {
+  const [checkInError, setCheckInError] = useState("");
+
+  async function handleCheckIn() {
+    setCheckInError("");
+    try {
+      await onCheckIn();
+    } catch (error) {
+      setCheckInError(error instanceof Error ? error.message : "Kunne ikke sjekke inn.");
+    }
+  }
+
   return (
     <main className="app-shell vip-screen">
       <section className="vip-pass" aria-label={`VIP-pass for ${session.name}`}>
@@ -145,8 +182,9 @@ function VipPass({ session, onCheckIn }: { session: VipSession; onCheckIn: () =>
           {session.checkInUntil ? (
             <p className="check-in-time">Kan sjekke inn: {formatCheckInTime(session.checkInUntil)}</p>
           ) : (
-            <button className="check-in-button" type="button" onClick={onCheckIn}>Sjekk inn</button>
+            <button className="check-in-button" type="button" onClick={handleCheckIn}>Sjekk inn</button>
           )}
+          {checkInError ? <p className="check-in-error" role="alert">{checkInError}</p> : null}
         </div>
 
         <p className="instructions">
