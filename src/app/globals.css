@@ -57,8 +57,9 @@ button {
 
 .club-logo {
   display: block;
-  width: min(64vw, 248px);
-  height: auto;
+  width: min(58vw, 238px);
+  height: min(16.4vw, 67px);
+  object-fit: fill;
   margin: 0 auto 4px;
 }
 
@@ -73,7 +74,7 @@ button {
   position: absolute;
   right: 50%;
   bottom: 0;
-  width: min(94vw, 358px);
+  width: min(90vw, 345px);
   height: auto;
   transform: translateX(50%);
 }
@@ -82,7 +83,7 @@ button {
   position: absolute;
   top: 29px;
   left: 50%;
-  width: 162px;
+  width: 150px;
   height: auto;
   transform: translateX(-50%);
   filter: drop-shadow(0 0 9px rgb(243 194 44 / 35%));
@@ -90,7 +91,7 @@ button {
 
 .nameplate {
   position: relative;
-  width: min(82vw, 310px);
+  width: min(75vw, 288px);
   aspect-ratio: 1149 / 249;
   margin: 0 auto;
   display: grid;
@@ -115,7 +116,7 @@ button {
 }
 
 .guest-access {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   color: var(--soft-white);
   font-size: clamp(16px, 4.5vw, 18px);
   font-weight: 400;
@@ -132,14 +133,14 @@ button {
 
 .check-in-slot {
   min-height: 56px;
-  margin-top: 30px;
+  margin-top: 24px;
   display: grid;
   place-items: center;
 }
 
 .check-in-button {
   width: 148px;
-  min-height: 50px;
+  min-height: 44px;
   border: 1px solid #c8c8c8;
   border-radius: 28px;
   background: linear-gradient(to bottom, #ffffff 0%, #fafafa 45%, #e6e6e6 100%);
@@ -174,7 +175,7 @@ button {
 }
 
 .instructions {
-  margin: 56px 0 0;
+  margin: 46px 0 0;
   color: var(--soft-white);
   font-size: clamp(15px, 4.2vw, 17px);
   font-style: italic;
