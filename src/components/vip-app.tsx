@@ -153,14 +153,7 @@ function VipPass({ session, onCheckIn }: { session: PublicAccessSession; onCheck
         />
 
         <div className="vip-artwork" aria-hidden="true">
-          <Image
-            className="dancers"
-            src="/assets/dancer-silhouettes.png"
-            alt=""
-            width={893}
-            height={534}
-            priority
-          />
+          <div className="dancers" />
           <Image
             className="vip-badge"
             src="/assets/vip-badge.png"
