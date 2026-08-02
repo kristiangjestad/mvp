@@ -147,19 +147,24 @@ button {
 }
 
 .check-in-slot {
-  min-height: 56px;
+  min-height: 70px;
   margin-top: 24px;
   display: grid;
   place-items: center;
 }
 
 .check-in-button {
-  width: 148px;
-  min-height: 44px;
-  border: 1px solid #c8c8c8;
-  border-radius: 28px;
-  background: linear-gradient(to bottom, #ffffff 0%, #fafafa 45%, #e6e6e6 100%);
-  box-shadow: inset 0 2px 3px rgb(255 255 255 / 90%), inset 0 -2px 3px rgb(0 0 0 / 8%);
+  width: 206px;
+  min-height: 58px;
+  border: 1px solid #bebec0;
+  border-radius: 31px;
+  background:
+    radial-gradient(ellipse 88% 82% at 50% 5%, #ffffff 0%, #fefefe 47%, transparent 50%),
+    linear-gradient(to bottom, #f9f9fa 0%, #f1f1f3 52%, #ececee 100%);
+  box-shadow:
+    0 3px 9px rgb(0 0 0 / 55%),
+    inset 0 1px 1px rgb(255 255 255 / 95%),
+    inset 0 -1px 1px rgb(0 0 0 / 8%);
   color: #111111;
   cursor: pointer;
   display: grid;
@@ -168,9 +173,10 @@ button {
 
 .check-in-label-graphic {
   display: block;
-  width: 118px;
-  height: 30px;
-  background: url("/assets/check-in-label.png") 0 0 / 584px 214.4px no-repeat;
+  width: 104px;
+  height: 26px;
+  background: url("/assets/check-in-label.png") 0 0 / 511px 187.6px no-repeat;
+  transform: translateY(1px);
 }
 
 .sr-only {
