@@ -5,16 +5,99 @@ import { FormEvent, useEffect, useState } from "react";
 import { formatCheckInTime } from "@/lib/vip-session";
 import type { PublicAccessSession } from "@/lib/vip-access";
 
+const SESSION_CACHE_KEY = "dtvip_session_cache_v1";
+const CHECK_IN_KEY = "dtvip_check_in_until";
+const SESSION_CACHE_MS = 60 * 60 * 1000;
+const CHECK_IN_MS = 8 * 60 * 60 * 1000;
+
+type CachedSession = {
+  session: PublicAccessSession;
+  validUntil: number;
+};
+
+function removeCachedSession() {
+  try {
+    window.localStorage.removeItem(SESSION_CACHE_KEY);
+  } catch {
+    // Ignore storage restrictions in Safari private contexts.
+  }
+}
+
+function readLocalCheckIn() {
+  try {
+    const value = Number(window.localStorage.getItem(CHECK_IN_KEY));
+    if (value > Date.now()) return value;
+    window.localStorage.removeItem(CHECK_IN_KEY);
+  } catch {
+    // Safari can deny storage in private contexts; check-in still works in memory.
+  }
+  return undefined;
+}
+
+function withLocalCheckIn(session: PublicAccessSession): PublicAccessSession {
+  return { ...session, checkInUntil: readLocalCheckIn() };
+}
+
+function readCachedSession() {
+  try {
+    const raw = window.localStorage.getItem(SESSION_CACHE_KEY);
+    if (!raw) return null;
+    const cached = JSON.parse(raw) as CachedSession;
+    const isExpired = cached.session.expiresAt && cached.session.expiresAt <= Date.now();
+    if (!cached.session.name || cached.validUntil <= Date.now() || isExpired) {
+      removeCachedSession();
+      return null;
+    }
+    return withLocalCheckIn(cached.session);
+  } catch {
+    removeCachedSession();
+    return null;
+  }
+}
+
+function cacheValidatedSession(session: PublicAccessSession) {
+  try {
+    const absoluteExpiry = session.expiresAt ?? Number.POSITIVE_INFINITY;
+    const cached: CachedSession = {
+      session,
+      validUntil: Math.min(Date.now() + SESSION_CACHE_MS, absoluteExpiry),
+    };
+    window.localStorage.setItem(SESSION_CACHE_KEY, JSON.stringify(cached));
+  } catch {
+    // The server session remains the source of truth when storage is unavailable.
+  }
+}
+
+function updateCachedSession(session: PublicAccessSession) {
+  try {
+    const raw = window.localStorage.getItem(SESSION_CACHE_KEY);
+    if (!raw) return;
+    const cached = JSON.parse(raw) as CachedSession;
+    window.localStorage.setItem(SESSION_CACHE_KEY, JSON.stringify({ ...cached, session }));
+  } catch {
+    // Keep the in-memory state even if Safari storage is unavailable.
+  }
+}
+
 export function VipApp() {
   const [session, setSession] = useState<PublicAccessSession | null | undefined>(undefined);
   const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
+    const cached = readCachedSession();
+    if (cached) {
+      setSession(cached);
+      return;
+    }
+
     fetch("/api/access/session", { cache: "no-store" })
       .then(async (response) => {
         const data = (await response.json()) as { session?: PublicAccessSession | null; error?: string };
         if (!response.ok) throw new Error(data.error ?? "Kunne ikke åpne VIP-passet.");
-        setSession(data.session ?? null);
+        const verifiedSession = data.session ? withLocalCheckIn(data.session) : null;
+        if (verifiedSession) cacheValidatedSession(verifiedSession);
+        else removeCachedSession();
+        setSession(verifiedSession);
       })
       .catch((error: unknown) => {
         setLoadError(error instanceof Error ? error.message : "Kunne ikke åpne VIP-passet.");
@@ -26,15 +109,29 @@ export function VipApp() {
     return <main className="app-shell" aria-label="Laster VIP-pass" />;
   }
 
-  if (!session) {
-    return <AccessGate onAuthorized={setSession} initialError={loadError} />;
+  function authorize(sessionToCache: PublicAccessSession) {
+    const authorizedSession = withLocalCheckIn(sessionToCache);
+    cacheValidatedSession(authorizedSession);
+    setSession(authorizedSession);
   }
 
-  async function checkIn() {
-    const response = await fetch("/api/access/check-in", { method: "POST" });
-    const data = (await response.json()) as { checkInUntil?: number; error?: string };
-    if (!response.ok || !data.checkInUntil) throw new Error(data.error ?? "Kunne ikke sjekke inn.");
-    setSession((current) => current ? { ...current, checkInUntil: data.checkInUntil } : current);
+  function checkIn() {
+    const checkInUntil = Date.now() + CHECK_IN_MS;
+    try {
+      window.localStorage.setItem(CHECK_IN_KEY, String(checkInUntil));
+    } catch {
+      // The timestamp still remains available for this open app session.
+    }
+    setSession((current) => {
+      if (!current) return current;
+      const updated = { ...current, checkInUntil };
+      updateCachedSession(updated);
+      return updated;
+    });
+  }
+
+  if (!session) {
+    return <AccessGate onAuthorized={authorize} initialError={loadError} />;
   }
 
   return <VipPass session={session} onCheckIn={checkIn} />;
@@ -87,10 +184,10 @@ function AccessGate({
       <section className="access-card" aria-labelledby="access-title">
         <Image
           className="access-logo"
-          src="/assets/club-downtown-logo.png"
+          src="/assets/club-downtown-logo-v3.png"
           alt="Club Downtown"
-          width={836}
-          height={296}
+          width={1664}
+          height={385}
           priority
         />
         <h1 id="access-title">VIP-pass</h1>
@@ -128,27 +225,16 @@ function AccessGate({
   );
 }
 
-function VipPass({ session, onCheckIn }: { session: PublicAccessSession; onCheckIn: () => Promise<void> }) {
-  const [checkInError, setCheckInError] = useState("");
-
-  async function handleCheckIn() {
-    setCheckInError("");
-    try {
-      await onCheckIn();
-    } catch (error) {
-      setCheckInError(error instanceof Error ? error.message : "Kunne ikke sjekke inn.");
-    }
-  }
-
+function VipPass({ session, onCheckIn }: { session: PublicAccessSession; onCheckIn: () => void }) {
   return (
     <main className="app-shell vip-screen">
       <section className="vip-pass" aria-label={`VIP-pass for ${session.name}`}>
         <Image
           className="club-logo"
-          src="/assets/club-downtown-logo.png"
+          src="/assets/club-downtown-logo-v3.png"
           alt="Club Downtown – everything's waiting for you"
-          width={836}
-          height={296}
+          width={1664}
+          height={385}
           priority
         />
 
@@ -175,9 +261,8 @@ function VipPass({ session, onCheckIn }: { session: PublicAccessSession; onCheck
           {session.checkInUntil ? (
             <p className="check-in-time">Kan sjekke inn: {formatCheckInTime(session.checkInUntil)}</p>
           ) : (
-            <button className="check-in-button" type="button" onClick={handleCheckIn}>Sjekk inn</button>
+            <button className="check-in-button" type="button" onClick={onCheckIn}>Sjekk inn</button>
           )}
-          {checkInError ? <p className="check-in-error" role="alert">{checkInError}</p> : null}
         </div>
 
         <p className="instructions">

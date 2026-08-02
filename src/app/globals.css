@@ -253,12 +253,6 @@ button {
   font-size: 14px;
 }
 
-.check-in-error {
-  margin: 8px 0 0;
-  color: var(--date-pink);
-  font-size: 14px;
-}
-
 .access-button {
   min-height: 52px;
   margin-top: 18px;
