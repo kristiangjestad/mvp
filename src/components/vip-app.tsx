@@ -184,10 +184,10 @@ function AccessGate({
       <section className="access-card" aria-labelledby="access-title">
         <Image
           className="access-logo"
-          src="/assets/club-downtown-logo-v3.png"
+          src="/assets/club-downtown-logo-v4.png"
           alt="Club Downtown"
-          width={1664}
-          height={385}
+          width={2033}
+          height={497}
           priority
         />
         <h1 id="access-title">VIP-pass</h1>
@@ -231,10 +231,10 @@ function VipPass({ session, onCheckIn }: { session: PublicAccessSession; onCheck
       <section className="vip-pass" aria-label={`VIP-pass for ${session.name}`}>
         <Image
           className="club-logo"
-          src="/assets/club-downtown-logo-v3.png"
+          src="/assets/club-downtown-logo-v4.png"
           alt="Club Downtown – everything's waiting for you"
-          width={1664}
-          height={385}
+          width={2033}
+          height={497}
           priority
         />
 
