@@ -106,15 +106,7 @@ export function VipApp() {
   }, []);
 
   if (session === undefined) {
-    return (
-      <main className="app-shell game-screen game-loading" aria-label="Laster spillerpass">
-        <div className="game-unicorn-mark" aria-hidden="true">
-          <span>✦</span>
-          <strong>🦄</strong>
-          <span>✦</span>
-        </div>
-      </main>
-    );
+    return <main className="app-shell" aria-label="Laster spillerpass" />;
   }
 
   function authorize(sessionToCache: PublicAccessSession) {

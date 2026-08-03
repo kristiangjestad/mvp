@@ -238,11 +238,6 @@ button {
   color: #4b214a;
 }
 
-.game-loading {
-  display: grid;
-  place-items: center;
-}
-
 .game-unicorn-mark {
   min-height: 92px;
   display: flex;
