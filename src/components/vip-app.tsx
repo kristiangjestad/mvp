@@ -106,7 +106,15 @@ export function VipApp() {
   }, []);
 
   if (session === undefined) {
-    return <main className="app-shell" aria-label="Laster VIP-pass" />;
+    return (
+      <main className="app-shell game-screen game-loading" aria-label="Laster spillerpass">
+        <div className="game-unicorn-mark" aria-hidden="true">
+          <span>✦</span>
+          <strong>🦄</strong>
+          <span>✦</span>
+        </div>
+      </main>
+    );
   }
 
   function authorize(sessionToCache: PublicAccessSession) {
@@ -153,11 +161,11 @@ function AccessGate({
     event.preventDefault();
     const trimmedName = name.trim();
     if (!trimmedName) {
-      setError("Skriv inn navnet ditt.");
+      setError("Skriv inn spillernavnet ditt.");
       return;
     }
     if (!code.trim()) {
-      setError("Skriv inn tilgangskoden.");
+      setError("Skriv inn stjernekoden.");
       return;
     }
 
@@ -180,21 +188,19 @@ function AccessGate({
   }
 
   return (
-    <main className="app-shell access-screen">
+    <main className="app-shell access-screen game-screen">
       <section className="access-card" aria-labelledby="access-title">
-        <Image
-          className="access-logo"
-          src="/assets/club-downtown-logo-v4.png"
-          alt="Club Downtown"
-          width={2033}
-          height={497}
-          priority
-        />
-        <h1 id="access-title">VIP-pass</h1>
-        <p className="access-intro">Skriv inn navn og engangskoden du har fått.</p>
+        <div className="game-unicorn-mark" aria-hidden="true">
+          <span>✦</span>
+          <strong>🦄</strong>
+          <span>✦</span>
+        </div>
+        <p className="access-eyebrow">Rosa regnbuerike</p>
+        <h1 id="access-title">Enhjørning VIP</h1>
+        <p className="access-intro">Skriv inn spillernavn og stjernekoden du har fått.</p>
 
         <form onSubmit={submit} className="access-form">
-          <label htmlFor="name">Navn</label>
+          <label htmlFor="name">Spillernavn</label>
           <input
             id="name"
             name="name"
@@ -203,7 +209,7 @@ function AccessGate({
             onChange={(event) => setName(event.target.value)}
           />
 
-          <label htmlFor="code">Engangskode</label>
+          <label htmlFor="code">Stjernekode</label>
           <input
             id="code"
             name="code"
@@ -217,7 +223,7 @@ function AccessGate({
 
           {error ? <p className="form-error" role="alert">{error}</p> : null}
           <button type="submit" className="access-button" disabled={submitting}>
-            {submitting ? "Aktiverer…" : "Åpne VIP-pass"}
+            {submitting ? "Låser opp…" : "Åpne spillerpass"}
           </button>
         </form>
       </section>

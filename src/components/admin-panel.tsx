@@ -155,17 +155,31 @@ export function AdminPanel() {
   }
 
   if (authenticated === undefined) {
-    return <main className="admin-shell"><p>Laster administrasjon…</p></main>;
+    return (
+      <main className="admin-shell admin-login-shell">
+        <div className="game-unicorn-mark" aria-label="Laster spillverksted">
+          <span aria-hidden="true">✦</span>
+          <strong aria-hidden="true">🦄</strong>
+          <span aria-hidden="true">✦</span>
+        </div>
+      </main>
+    );
   }
 
   if (!authenticated) {
     return (
       <main className="admin-shell admin-login-shell">
         <section className="admin-login-card">
-          <p className="admin-kicker">Downtown VIP</p>
-          <h1>Administrasjon</h1>
+          <div className="game-unicorn-mark" aria-hidden="true">
+            <span>✦</span>
+            <strong>🦄</strong>
+            <span>✦</span>
+          </div>
+          <p className="admin-kicker">Rosa regnbuerike</p>
+          <h1>Spillverksted</h1>
+          <p className="admin-login-intro">Bare for spillmestere.</p>
           <form onSubmit={login} className="admin-form">
-            <label htmlFor="admin-password">Adminpassord</label>
+            <label htmlFor="admin-password">Mesterpassord</label>
             <input
               id="admin-password"
               type="password"
@@ -174,7 +188,7 @@ export function AdminPanel() {
               onChange={(event) => setPassword(event.target.value)}
               required
             />
-            <button type="submit" disabled={busy}>{busy ? "Logger inn…" : "Logg inn"}</button>
+            <button type="submit" disabled={busy}>{busy ? "Åpner…" : "Åpne verkstedet"}</button>
           </form>
           {message ? <p className="admin-message admin-error" role="alert">{message}</p> : null}
         </section>
@@ -186,19 +200,19 @@ export function AdminPanel() {
     <main className="admin-shell">
       <header className="admin-header">
         <div>
-          <p className="admin-kicker">Downtown VIP</p>
-          <h1>Tilgangskoder</h1>
+          <p className="admin-kicker">Rosa regnbuerike</p>
+          <h1>Spillerkoder</h1>
         </div>
-        <button type="button" className="admin-secondary" onClick={logout}>Logg ut</button>
+        <button type="button" className="admin-secondary" onClick={logout}>Lukk verkstedet</button>
       </header>
 
       <section className="admin-create-card">
         <div>
-          <h2>Lag ny engangskode</h2>
-          <p>Koden bindes til den første enheten som aktiverer den.</p>
+          <h2>Lag ny stjernekode</h2>
+          <p>Koden bindes til den første spilleren som aktiverer den.</p>
         </div>
         <form onSubmit={createCode} className="admin-create-form">
-          <label htmlFor="comment">Hvem er koden til?</label>
+          <label htmlFor="comment">Hvem skal få koden?</label>
           <input
             id="comment"
             value={comment}
@@ -233,12 +247,12 @@ export function AdminPanel() {
               </div>
             </>
           ) : null}
-          <button type="submit" disabled={busy}>{busy ? "Oppretter…" : "Generer kode"}</button>
+          <button type="submit" disabled={busy}>{busy ? "Tryller…" : "Lag stjernekode"}</button>
         </form>
 
         {newCode ? (
           <div className="admin-new-code" role="status">
-            <span>Ny kode — kopier den nå</span>
+            <span>Ny stjernekode — kopier den nå</span>
             <strong>{newCode}</strong>
             <button type="button" onClick={() => navigator.clipboard.writeText(newCode)}>Kopier kode</button>
           </div>
@@ -249,10 +263,10 @@ export function AdminPanel() {
 
       <section className="admin-list-section">
         <div className="admin-list-heading">
-          <h2>Alle koder</h2>
+          <h2>Alle spillerkoder</h2>
           <span>{codes.length} totalt</span>
         </div>
-        {codes.length === 0 ? <p className="admin-empty">Ingen koder er opprettet ennå.</p> : null}
+        {codes.length === 0 ? <p className="admin-empty">Ingen spillerkoder er laget ennå.</p> : null}
         <div className="admin-code-list">
           {codes.map((code) => (
             <article className="admin-code-card" key={code.codeHash}>

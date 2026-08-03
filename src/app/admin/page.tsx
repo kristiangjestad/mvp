@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AdminPanel } from "@/components/admin-panel";
 
 export const metadata: Metadata = {
-  title: "Administrasjon – Downtown VIP",
+  title: "Spillverksted – Downtown VIP",
   robots: { index: false, follow: false },
 };
 
