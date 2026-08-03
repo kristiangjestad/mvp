@@ -193,10 +193,12 @@ function AccessGate({
 
         <form onSubmit={submit} className="access-form">
           <label htmlFor="name">Spillernavn</label>
+          <span id="name-hint" className="access-field-hint">Navnet som står på legget ditt</span>
           <input
             id="name"
             name="name"
             autoComplete="name"
+            aria-describedby="name-hint"
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
