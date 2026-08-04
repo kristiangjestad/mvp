@@ -56,6 +56,7 @@ export async function POST(request: Request) {
 
     const record: AccessCodeRecord = {
       codeHash,
+      code,
       codeSuffix: code.slice(-5),
       comment,
       durationDays,

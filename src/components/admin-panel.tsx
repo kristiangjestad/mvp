@@ -6,6 +6,7 @@ type CodeStatus = "unused" | "active" | "expired" | "revoked";
 
 type AdminCode = {
   codeHash: string;
+  code: string;
   codeSuffix: string;
   comment: string;
   durationDays: number | null;
@@ -274,7 +275,7 @@ export function AdminPanel() {
                 <strong>{code.comment}</strong>
                 <span className={`admin-status admin-status-${code.status}`}>{statusLabels[code.status]}</span>
               </div>
-              <p className="admin-code-mask">DTVIP-•••••-{code.codeSuffix}</p>
+              <p className="admin-code-mask">{code.code}</p>
               <dl>
                 <div><dt>Varighet</dt><dd>{code.durationDays === null ? "Ubegrenset" : `${code.durationDays} dager`}</dd></div>
                 <div><dt>Opprettet</dt><dd>{formatDate(code.createdAt)}</dd></div>

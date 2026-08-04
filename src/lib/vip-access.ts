@@ -10,6 +10,7 @@ export const ADMIN_SESSION_SECONDS = 12 * 60 * 60;
 
 export type AccessCodeRecord = {
   codeHash: string;
+  code: string;
   codeSuffix: string;
   comment: string;
   durationDays: number | null;

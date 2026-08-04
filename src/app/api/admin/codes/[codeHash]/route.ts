@@ -26,6 +26,7 @@ export async function PATCH(request: Request, { params }: Context) {
       await deleteAccessSession(record.sessionHash);
       const reset = {
         codeHash: record.codeHash,
+        code: record.code,
         codeSuffix: record.codeSuffix,
         comment: record.comment,
         durationDays: record.durationDays,
