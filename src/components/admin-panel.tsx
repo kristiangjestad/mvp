@@ -6,7 +6,7 @@ type CodeStatus = "unused" | "active" | "expired" | "revoked";
 
 type AdminCode = {
   codeHash: string;
-  code: string;
+  code?: string;
   codeSuffix: string;
   comment: string;
   durationDays: number | null;
@@ -44,6 +44,12 @@ export function AdminPanel() {
   const [newCode, setNewCode] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [copiedKey, setCopiedKey] = useState("");
+
+  async function copyCode(key: string, value: string) {
+    await navigator.clipboard.writeText(value);
+    setCopiedKey(key);
+  }
 
   const loadCodes = useCallback(async () => {
     const response = await fetch("/api/admin/codes", { cache: "no-store" });
@@ -255,7 +261,9 @@ export function AdminPanel() {
           <div className="admin-new-code" role="status">
             <span>Ny stjernekode — kopier den nå</span>
             <strong>{newCode}</strong>
-            <button type="button" onClick={() => navigator.clipboard.writeText(newCode)}>Kopier kode</button>
+            <button type="button" onClick={() => copyCode("new", newCode)}>
+              {copiedKey === "new" ? "Kopiert!" : "Kopier kode"}
+            </button>
           </div>
         ) : null}
       </section>
@@ -275,7 +283,18 @@ export function AdminPanel() {
                 <strong>{code.comment}</strong>
                 <span className={`admin-status admin-status-${code.status}`}>{statusLabels[code.status]}</span>
               </div>
-              <p className="admin-code-mask">{code.code}</p>
+              <p className="admin-code-mask">
+                <span>{code.code ?? `DTVIP-•••••-${code.codeSuffix}`}</span>
+                {code.code ? (
+                  <button
+                    type="button"
+                    className="admin-copy"
+                    onClick={() => copyCode(code.codeHash, code.code!)}
+                  >
+                    {copiedKey === code.codeHash ? "Kopiert!" : "Kopier"}
+                  </button>
+                ) : null}
+              </p>
               <dl>
                 <div><dt>Varighet</dt><dd>{code.durationDays === null ? "Ubegrenset" : `${code.durationDays} dager`}</dd></div>
                 <div><dt>Opprettet</dt><dd>{formatDate(code.createdAt)}</dd></div>

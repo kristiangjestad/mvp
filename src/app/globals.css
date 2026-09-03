@@ -659,9 +659,33 @@ button {
 
 .admin-code-mask {
   margin: 9px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: #9a4b8f;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 14px;
+}
+
+.admin-code-mask > span {
+  overflow-wrap: anywhere;
+}
+
+.admin-copy {
+  flex: none;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid #d7a8d3;
+  background: #fdf1fb;
+  color: #6c2765;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-copy:hover {
+  background: #f7e2f4;
 }
 
 .admin-code-card dl {
